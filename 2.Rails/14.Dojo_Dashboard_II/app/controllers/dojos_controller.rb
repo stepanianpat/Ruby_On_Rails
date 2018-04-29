@@ -1,0 +1,28 @@
+class DojosController < ApplicationController
+  def index
+    @dojo=Dojo.all
+    @count=Dojo.count
+  end
+
+  def new
+
+  end
+
+  def create
+    # @dojo=Dojo.create(dojo_params)
+    # how to work with the errors messages is using .create 
+    dojo=Dojo.new(dojo_params)
+    if dojo.save
+      redirect_to '/dojos'
+    else
+      flash[:errors]=dojo.errors.full_messages
+      redirect_to :back
+    end
+  end
+
+
+  private
+  def dojo_params
+    params.require(:dojo).permit(:branch, :street, :city, :state)
+  end
+end

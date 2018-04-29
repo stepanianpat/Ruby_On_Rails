@@ -1,0 +1,15 @@
+<div id="flash">
+  <% if flash[:success] %>
+    <p><%= flash[:success]%></p>
+  <% end %>
+</div>
+
+<div id="info">
+  <h2>submitted Information</h2>
+  <h3>Name: <%= session[:result]['name'] %> </h3>
+  <h3>Language: <%= session[:result]['language'] %></h3>
+  <h3>Location: <%= session[:result]['location'] %></h3>
+  <h3>Comments: <%= session[:result]['comment'] %></h3>
+</div>
+
+<a href="/reset">Go Back</a>

@@ -1,0 +1,33 @@
+<h1>Editing <%= @student.first_name%> <%= @student.last_name%></h1>
+
+<form action="/dojos/<%= @dojo.id %>/students/<%= @student.id %>" method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <input type="hidden" name="_method" value="patch">
+  <h3>First Name: <input type="text" name="student[first_name]"></h3>
+  <h3>Last Name: <input type="text" name="student[last_name]"></h3>
+  <h3>Email: <input type="text" name="student[email]"></h3>
+  <h3>
+    <select name="student[dojo_id]">
+      <% @dojos.each do |dojo| %>
+        <% if dojo.id == @student.dojo_id %>
+          <option selected value="<%= dojo.id%>"><%= dojo.branch %></option>
+        <% else %>
+          <option value="<%= dojo.id %>"><%= dojo.branch%></option>
+        <% end %>
+      <% end %>
+    </select>
+  </h3>
+  <button>Submit</button>
+</form>
+
+<div id="errors">
+  <% if flash[:errors]%>
+    <% flash[:errors].each do |errors| %>
+      <ul style="list-style:none; color:red">
+        <li><%= errors%></li>
+      </ul>
+    <% end %>
+  <% end %>
+</div>
+
+<h4><a href="/goback">Home</a> | <a href="/dojos/<%= @dojo.id %>/students/<%= @student.id %>"><%= @student.first_name%></a> </h4>

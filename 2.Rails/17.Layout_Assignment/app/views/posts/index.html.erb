@@ -1,0 +1,45 @@
+<h1>post index</h1>
+
+<%= content_for :left do %>
+<h3>All Posts</h3>
+<table>
+  <tr>
+    <th>Title</th>
+    <th>Content</th>
+    <th>Author</th>
+  </tr>
+
+  <% @post.each do |p| %>
+  <tr>
+    <td><%= p.title %></td>
+    <td><%= p.content %></td>
+    <td><%= p.user.first_name %> <%= p.user.last_name %></td>
+  </tr>
+  <% end %>
+</table>
+
+<% end %>
+
+<%= content_for :middle do %>
+<h2>New Post</h2>
+<form action="#" method="post">
+  <h4>Title</h4>
+  <input type="text" name="post[title]">
+  <h4>Content</h4>
+  <textarea name="post[content]" rows="10" cols="60"></textarea>
+  <br>
+  <label>Author</label>
+  <select name="post[user_id]">
+    <% @post.each do |p| %>
+    <option><%= p.user.first_name%> <%= p.user.last_name%></option>
+    <% end %>
+  </select>
+  <br>
+  <button id="submit" >Submit</button>
+</form>
+<% end %>
+
+<%= content_for :right do %>
+<h3>Go To User Page</h3>
+<h4 id='all'><a href="/users/index"> All Users</a></h4>
+<% end %>

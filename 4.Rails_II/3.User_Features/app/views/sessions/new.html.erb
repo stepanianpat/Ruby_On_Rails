@@ -1,0 +1,14 @@
+
+
+
+<form class="" action="/sessions" method="post">
+<h4>Email: <input id="Email" type="text" name="email"></h4>
+<h4>Password: <input id="Password" type="text" name="password"></h4>
+<button id="Log In">Log In</button>
+</form>
+
+<% if flash[:errors] %>
+  <% flash[:errors].each do |e| %>
+    <p style="color:red"><%= e %></p>
+  <% end  %>
+<% end %>

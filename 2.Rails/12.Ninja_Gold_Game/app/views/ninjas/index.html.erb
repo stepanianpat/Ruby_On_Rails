@@ -1,0 +1,51 @@
+
+<h2>Welcome to our ninja gold game!</h2>
+
+<h3>Your Gold: <%= @gold %> </h3>
+
+<form action="/gold" method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <input type="hidden" name="building" value="farm">
+  <h4>Farm</h4>
+  <h6>(earn 10-20 golds)</h6>
+  <button>Find Gold!</button>
+</form>
+
+<form action="/gold" method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <input type="hidden" name="building" value="cave">
+  <h4>Cave</h4>
+  <h6>(earn 5-10 golds)</h6>
+  <button>Find Gold!</button>
+</form>
+
+<form action="/gold" method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <input type="hidden" name="building" value="house">
+  <h4>House</h4>
+  <h6>(earn 2-5 golds)</h6>
+  <button>Find Gold!</button>
+</form>
+
+<form action="/gold" method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <input type="hidden" name="building" value="casino">
+  <h4>Casino</h4>
+  <h6>(earn/takes 0-50 golds)</h6>
+  <button>Find Gold!</button>
+</form>
+
+
+<div id='activities'>
+  <ul>
+    <% @activities.reverse.each do |a| %>
+      <% if a[0]== "Y"%>
+        <li style="color:green"><%= a %></li>
+      <% else %>
+        <li style="color:red"><%= a %></li>
+      <% end %>
+    <% end %>
+  </ul>
+</div>
+<br>
+<a href="/reset">Reset Game</a>

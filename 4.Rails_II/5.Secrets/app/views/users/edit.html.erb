@@ -1,0 +1,22 @@
+<h2>Edit <%= @user.name %> </h2>
+
+<form action="/users/<%= @user.id %>" method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <input type="hidden" name="_method" value="patch">
+  <h4>Email: <input id="Email" type="text" name="user[email]" value="<%= @user.email %>"></h4>
+  <h4>Name: <input id="Name" type="text" name="user[name]" value="<%= @user.name %>"></h4>
+  <button id="Update">Update</button>
+</form>
+
+<% if flash[:errors] %>
+  <% flash[:errors].each do |e| %>
+    <p style="color:red"><%= e %></p>
+  <% end %>
+<% end %>
+
+
+<form action="/users/<%= @user.id %>" method="post">
+  <input type="hidden" name="authenticity_token" value="<%= form_authenticity_token %>">
+  <input type="hidden" name="_method" value="delete">
+  <button id="Delete Account">Delete Account</button>
+</form>

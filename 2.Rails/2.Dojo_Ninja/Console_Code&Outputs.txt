@@ -1,0 +1,308 @@
+***********************Dojo Validation *****************
+
+2.3.1 :012 > dojo1=Dojo.create(city:"LA",state:"California")
+   (0.1ms)  begin transaction
+   (0.1ms)  rollback transaction
++----+------+------+------------+------------+------------+
+| id | name | city | state      | created_at | updated_at |
++----+------+------+------------+------------+------------+
+|    |      | LA   | California |            |            |
++----+------+------+------------+------------+------------+
+1 row in set
+2.3.1 :013 > dojo1.valid?
+ => false
+2.3.1 :014 > dojo1.errors.full_messages
+ => ["Name can't be blank", "State is the wrong length (should be 2 characters)"]
+2.3.1 :015 >
+
+*********************** Ninja Validation ***********************
+
+2.3.1 :001 > ninja1=Ninja.create(first_name:'A')
+   (0.1ms)  begin transaction
+   (0.1ms)  rollback transaction
+ => #<Ninja id: nil, first_name: "A", last_name: nil, dojo_id: nil, created_at: nil, updated_at: nil>
+2.3.1 :002 > ninja1.valid?
+ => false
+2.3.1 :003 > ninja1.errors.full_messages
+ => ["Last name can't be blank", "Last name is too short (minimum is 2 characters)", "First name is too short (minimum is 2 characters)"]
+2.3.1 :004 >
+
+
+************************Original Three dojos and ninjas ****************************
+
+vagrant@vagrant-ubuntu-trusty-64:/vagrant/2.Rails/2.Dojo_Ninja/Dojo_Ninja$ rails c
+Running via Spring preloader in process 2893
+Loading development environment (Rails 4.2.7)
+2.3.1 :001 > Hirb.enable
+ => true
+ 2.3.1 :008 > Dojo.all
+   Dojo Load (3.4ms)  SELECT "dojos".* FROM "dojos"
+ +----+---------------------------+---------------+-------+-------------------------+-------------------------+
+ | id | name                      | city          | state | created_at              | updated_at              |
+ +----+---------------------------+---------------+-------+-------------------------+-------------------------+
+ | 1  | CodingDojo Silicon Valley | Mountain View | CA    | 2017-04-06 06:16:24 UTC | 2017-04-06 06:16:24 UTC |
+ | 2  | CodingDojo Seattle        | Seattle       | WA    | 2017-04-06 06:17:20 UTC | 2017-04-06 06:17:20 UTC |
+ | 3  | CodingDojo New York       | New York      | NY    | 2017-04-06 06:17:49 UTC | 2017-04-06 06:17:49 UTC |
+ +----+---------------------------+---------------+-------+-------------------------+-------------------------+
+ 3 rows in set
+ 2.3.1 :009 > Ninja.all
+   Ninja Load (3.4ms)  SELECT "ninjas".* FROM "ninjas"
+ +----+------------+-----------+---------+-------------------------+-------------------------+
+ | id | first_name | last_name | dojo_id | created_at              | updated_at              |
+ +----+------------+-----------+---------+-------------------------+-------------------------+
+ | 1  | Nick       | Smith     | 1       | 2017-04-06 06:29:45 UTC | 2017-04-06 06:29:45 UTC |
+ | 2  | Eddie      | Ronaldo   | 1       | 2017-04-06 06:32:10 UTC | 2017-04-06 06:32:10 UTC |
+ | 3  | Bruce      | Wayne     | 1       | 2017-04-06 06:32:43 UTC | 2017-04-06 06:32:43 UTC |
+ | 4  | Leo        | Messi     | 2       | 2017-04-06 07:19:27 UTC | 2017-04-06 07:19:27 UTC |
+ | 5  | Mike       | Owen      | 3       | 2017-04-06 07:20:29 UTC | 2017-04-06 07:20:29 UTC |
+ +----+------------+-----------+---------+-------------------------+-------------------------+
+ 5 rows in set
+ 2.3.1 :010 >
+
+************************ Showing all the ninjas in Dojo.first ********
+
+2.3.1 :014 > Ninja.where(dojo_id:1)
+  Ninja Load (2.2ms)  SELECT "ninjas".* FROM "ninjas" WHERE "ninjas"."dojo_id" = ?  [["dojo_id", 1]]
++----+------------+-----------+---------+-------------------------+-------------------------+
+| id | first_name | last_name | dojo_id | created_at              | updated_at              |
++----+------------+-----------+---------+-------------------------+-------------------------+
+| 1  | Nick       | Smith     | 1       | 2017-04-06 06:29:45 UTC | 2017-04-06 06:29:45 UTC |
+| 2  | Eddie      | Ronaldo   | 1       | 2017-04-06 06:32:10 UTC | 2017-04-06 06:32:10 UTC |
+| 3  | Bruce      | Wayne     | 1       | 2017-04-06 06:32:43 UTC | 2017-04-06 06:32:43 UTC |
++----+------------+-----------+---------+-------------------------+-------------------------+
+3 rows in set
+
+
+************************** Showing All Ninjas in Dojo 1 from Dojo *********
+
+2.3.1 :017 > Dojo.first.ninjas
+  Dojo Load (2.4ms)  SELECT  "dojos".* FROM "dojos"  ORDER BY "dojos"."id" ASC LIMIT 1
+  Ninja Load (1.8ms)  SELECT "ninjas".* FROM "ninjas" WHERE "ninjas"."dojo_id" = ?  [["dojo_id", 1]]
++----+------------+-----------+---------+-------------------------+-------------------------+
+| id | first_name | last_name | dojo_id | created_at              | updated_at              |
++----+------------+-----------+---------+-------------------------+-------------------------+
+| 1  | Nick       | Smith     | 1       | 2017-04-06 06:29:45 UTC | 2017-04-06 06:29:45 UTC |
+| 2  | Eddie      | Ronaldo   | 1       | 2017-04-06 06:32:10 UTC | 2017-04-06 06:32:10 UTC |
+| 3  | Bruce      | Wayne     | 1       | 2017-04-06 06:32:43 UTC | 2017-04-06 06:32:43 UTC |
++----+------------+-----------+---------+-------------------------+-------------------------+
+3 rows in set
+
+***************** Delete three dojos ***********
+
+2.3.1 :020 > Dojo.destroy_all
+  Dojo Load (3.9ms)  SELECT "dojos".* FROM "dojos"
+   (0.1ms)  begin transaction
+  SQL (4.5ms)  DELETE FROM "dojos" WHERE "dojos"."id" = ?  [["id", 1]]
+   (62.9ms)  commit transaction
+   (0.8ms)  begin transaction
+  SQL (30.2ms)  DELETE FROM "dojos" WHERE "dojos"."id" = ?  [["id", 2]]
+   (43.8ms)  commit transaction
+   (0.1ms)  begin transaction
+  SQL (30.4ms)  DELETE FROM "dojos" WHERE "dojos"."id" = ?  [["id", 3]]
+   (56.5ms)  commit transaction
++----+---------------------------+---------------+-------+-------------------------+-------------------------+
+| id | name                      | city          | state | created_at              | updated_at              |
++----+---------------------------+---------------+-------+-------------------------+-------------------------+
+| 1  | CodingDojo Silicon Valley | Mountain View | CA    | 2017-04-06 06:16:24 UTC | 2017-04-06 06:16:24 UTC |
+| 2  | CodingDojo Seattle        | Seattle       | WA    | 2017-04-06 06:17:20 UTC | 2017-04-06 06:17:20 UTC |
+| 3  | CodingDojo New York       | New York      | NY    | 2017-04-06 06:17:49 UTC | 2017-04-06 06:17:49 UTC |
++----+---------------------------+---------------+-------+-------------------------+-------------------------+
+
+2.3.1 :021 > Dojo.all
+  Dojo Load (3.9ms)  SELECT "dojos".* FROM "dojos"
+ => #<ActiveRecord::Relation []>
+2.3.1 :022 >
+
+************************ Creating Another 4 dojos by using new method ******************
+2.3.1 :026 > dojo1=Dojo.new
++----+------+------+-------+------------+------------+
+| id | name | city | state | created_at | updated_at |
++----+------+------+-------+------------+------------+
+|    |      |      |       |            |            |
++----+------+------+-------+------------+------------+
+1 row in set
+2.3.1 :027 > dojo1.name = "Coding Dojo Burbank"
+ => "Coding Dojo Burbank"
+2.3.1 :028 > dojo1.city = "Burbank"
+ => "Burbank"
+2.3.1 :029 > dojo1.state = "CA"
+ => "CA"
+2.3.1 :030 >
+2.3.1 :031 >   dojo2 = Dojo.new
++----+------+------+-------+------------+------------+
+| id | name | city | state | created_at | updated_at |
++----+------+------+-------+------------+------------+
+|    |      |      |       |            |            |
++----+------+------+-------+------------+------------+
+1 row in set
+2.3.1 :032 > dojo2.name = "Coding Dojo Orange County"
+ => "Coding Dojo Orange County"
+2.3.1 :033 > dojo2.city = "Costa Mesa"
+ => "Costa Mesa"
+2.3.1 :034 > dojo2.state = "CA"
+ => "CA"
+2.3.1 :035 > dojo3 = Dojo.new
++----+------+------+-------+------------+------------+
+| id | name | city | state | created_at | updated_at |
++----+------+------+-------+------------+------------+
+|    |      |      |       |            |            |
++----+------+------+-------+------------+------------+
+1 row in set
+2.3.1 :036 > dojo3.name="Coding Dojo Chicago"
+ => "Coding Dojo Chicago"
+2.3.1 :037 > dojo3.city = "Chicago"
+ => "Chicago"
+2.3.1 :038 > dojo3.state="IL"
+ => "IL"
+2.3.1 :041 > dojo1.save
+   (0.3ms)  begin transaction
+  SQL (48.6ms)  INSERT INTO "dojos" ("name", "city", "state", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)  [["name", "Coding Dojo Burbank"], ["city", "Burbank"], ["state", "CA"], ["created_at", "2017-04-06 07:39:18.494887"], ["updated_at", "2017-04-06 07:39:18.494887"]]
+   (3.5ms)  commit transaction
+ => true
+2.3.1 :042 > dojo2.save
+   (0.1ms)  begin transaction
+  SQL (4.9ms)  INSERT INTO "dojos" ("name", "city", "state", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)  [["name", "Coding Dojo Orange County"], ["city", "Costa Mesa"], ["state", "CA"], ["created_at", "2017-04-06 07:39:23.004163"], ["updated_at", "2017-04-06 07:39:23.004163"]]
+   (3.8ms)  commit transaction
+ => true
+2.3.1 :043 > dojo3.save
+   (0.2ms)  begin transaction
+  SQL (4.5ms)  INSERT INTO "dojos" ("name", "city", "state", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)  [["name", "Coding Dojo Chicago"], ["city", "Chicago"], ["state", "IL"], ["created_at", "2017-04-06 07:39:25.747619"], ["updated_at", "2017-04-06 07:39:25.747619"]]
+   (68.9ms)  commit transaction
+ => true
+2.3.1 :044 > Dojo.all
+  Dojo Load (2.8ms)  SELECT "dojos".* FROM "dojos"
++----+---------------------------+------------+-------+-------------------------+-------------------------+
+| id | name                      | city       | state | created_at              | updated_at              |
++----+---------------------------+------------+-------+-------------------------+-------------------------+
+| 4  | Coding Dojo Burbank       | Burbank    | CA    | 2017-04-06 07:39:18 UTC | 2017-04-06 07:39:18 UTC |
+| 5  | Coding Dojo Orange County | Costa Mesa | CA    | 2017-04-06 07:39:23 UTC | 2017-04-06 07:39:23 UTC |
+| 6  | Coding Dojo Chicago       | Chicago    | IL    | 2017-04-06 07:39:25 UTC | 2017-04-06 07:39:25 UTC |
++----+---------------------------+------------+-------+-------------------------+-------------------------+
+3 rows in set
+2.3.1 :045 > dojo4=Dojo.new(name:"Coding Dojo Austin", city:"Austin", state:"TX")
++----+--------------------+--------+-------+------------+------------+
+| id | name               | city   | state | created_at | updated_at |
++----+--------------------+--------+-------+------------+------------+
+|    | Coding Dojo Austin | Austin | TX    |            |            |
++----+--------------------+--------+-------+------------+------------+
+1 row in set
+2.3.1 :046 > dojo4.save
+   (0.9ms)  begin transaction
+  SQL (4.7ms)  INSERT INTO "dojos" ("name", "city", "state", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?)  [["name", "Coding Dojo Austin"], ["city", "Austin"], ["state", "TX"], ["created_at", "2017-04-06 07:40:11.918103"], ["updated_at", "2017-04-06 07:40:11.918103"]]
+   (3.0ms)  commit transaction
+ => true
+2.3.1 :047 > Dojo.all
+  Dojo Load (3.8ms)  SELECT "dojos".* FROM "dojos"
++----+---------------------------+------------+-------+-------------------------+-------------------------+
+| id | name                      | city       | state | created_at              | updated_at              |
++----+---------------------------+------------+-------+-------------------------+-------------------------+
+| 4  | Coding Dojo Burbank       | Burbank    | CA    | 2017-04-06 07:39:18 UTC | 2017-04-06 07:39:18 UTC |
+| 5  | Coding Dojo Orange County | Costa Mesa | CA    | 2017-04-06 07:39:23 UTC | 2017-04-06 07:39:23 UTC |
+| 6  | Coding Dojo Chicago       | Chicago    | IL    | 2017-04-06 07:39:25 UTC | 2017-04-06 07:39:25 UTC |
+| 7  | Coding Dojo Austin        | Austin     | TX    | 2017-04-06 07:40:11 UTC | 2017-04-06 07:40:11 UTC |
++----+---------------------------+------------+-------+-------------------------+-------------------------+
+4 rows in set
+
+
+*********************** Creating More ninjas ***************
+
+2.3.1 :011 > Ninja.create(first_name:"Leo",last_name:"Messi",dojo:Dojo.second)
+2.3.1 :012 > Ninja.create(first_name:"Ronney", last_name:"Wayne",dojo:Dojo.second)
+2.3.1 :014 > Ninja.create(first_name:"Bruce",last_name:"Will",dojo:Dojo.second)
+
+Ninja.create(first_name:"Robert",last_name:"Baggio",dojo:Dojo.last)
+Ninja.create(first_name:"Toti",last_name:"Rome",dojo:Dojo.last)
+Ninja.create(first_name:"Torres",last_name:"Fernandez",dojo:Dojo.last)
+
+2.3.1 :018 > Ninja.all
+  Ninja Load (3.7ms)  SELECT "ninjas".* FROM "ninjas"
++----+------------+-----------+---------+-------------------------+-------------------------+
+| id | first_name | last_name | dojo_id | created_at              | updated_at              |
++----+------------+-----------+---------+-------------------------+-------------------------+
+| 1  | Nick       | Smith     | 1       | 2017-04-06 06:29:45 UTC | 2017-04-06 06:29:45 UTC |
+| 2  | Eddie      | Ronaldo   | 1       | 2017-04-06 06:32:10 UTC | 2017-04-06 06:32:10 UTC |
+| 3  | Bruce      | Wayne     | 1       | 2017-04-06 06:32:43 UTC | 2017-04-06 06:32:43 UTC |
+| 7  | Leo        | Messi     | 5       | 2017-04-06 07:53:21 UTC | 2017-04-06 07:53:21 UTC |
+| 8  | Ronney     | Wayne     | 5       | 2017-04-06 07:54:33 UTC | 2017-04-06 07:54:33 UTC |
+| 9  | Bruce      | Will      | 5       | 2017-04-06 07:55:53 UTC | 2017-04-06 07:55:53 UTC |
+| 10 | Robert     | Baggio    | 7       | 2017-04-06 07:58:03 UTC | 2017-04-06 07:58:03 UTC |
+| 11 | Toti       | Rome      | 7       | 2017-04-06 07:58:03 UTC | 2017-04-06 07:58:03 UTC |
+| 12 | Torres     | Fernandez | 7       | 2017-04-06 07:58:13 UTC | 2017-04-06 07:58:13 UTC |
++----+------------+-----------+---------+-------------------------+-------------------------+
+9 rows in set
+
+*********************** Get all ninjas from Dojo for Dojo at Austin ID=7 ***********
+
+2.3.1 :022 > Dojo.last.ninjas
+  Dojo Load (3.4ms)  SELECT  "dojos".* FROM "dojos"  ORDER BY "dojos"."id" DESC LIMIT 1
+  Ninja Load (2.0ms)  SELECT "ninjas".* FROM "ninjas" WHERE "ninjas"."dojo_id" = ?  [["dojo_id", 7]]
++----+------------+-----------+---------+-------------------------+-------------------------+
+| id | first_name | last_name | dojo_id | created_at              | updated_at              |
++----+------------+-----------+---------+-------------------------+-------------------------+
+| 10 | Robert     | Baggio    | 7       | 2017-04-06 07:58:03 UTC | 2017-04-06 07:58:03 UTC |
+| 11 | Toti       | Rome      | 7       | 2017-04-06 07:58:03 UTC | 2017-04-06 07:58:03 UTC |
+| 12 | Torres     | Fernandez | 7       | 2017-04-06 07:58:13 UTC | 2017-04-06 07:58:13 UTC |
++----+------------+-----------+---------+-------------------------+-------------------------+
+3 rows in set
+
+******************* Choose all ninjas from Last Dojo from ninjas table and select colums , order by first name ***********
+
+2.3.1 :024 > Ninja.where(dojo_id:7).select(:id,:first_name,:last_name,:dojo_id).order('first_name DESC')
+  Ninja Load (2.8ms)  SELECT "ninjas"."id", "ninjas"."first_name", "ninjas"."last_name", "ninjas"."dojo_id" FROM "ninjas" WHERE "ninjas"."dojo_id" = ?  ORDER BY first_name DESC  [["dojo_id", 7]]
++----+------------+-----------+---------+
+| id | first_name | last_name | dojo_id |
++----+------------+-----------+---------+
+| 11 | Toti       | Rome      | 7       |
+| 12 | Torres     | Fernandez | 7       |
+| 10 | Robert     | Baggio    | 7       |
++----+-------
+
+***************** Delete Dojo Id_5 and delete all ninjas associate with the Dojo.5 **********
+
+in dojo.rb file,
+has_many :ninjas, dependent: :destroy
+
+then, run the following in rails console
+
+2.3.1 :029 > Dojo.find(5).destroy
+
+this deletes the dojo with id=5 and all the associated ninjas
+
+2.3.1 :029 > Dojo.find(5).destroy
+  Dojo Load (3.0ms)  SELECT  "dojos".* FROM "dojos" WHERE "dojos"."id" = ? LIMIT 1  [["id", 5]]
+   (0.1ms)  begin transaction
+  Ninja Load (1.6ms)  SELECT "ninjas".* FROM "ninjas" WHERE "ninjas"."dojo_id" = ?  [["dojo_id", 5]]
+  SQL (2.9ms)  DELETE FROM "ninjas" WHERE "ninjas"."id" = ?  [["id", 7]]
+  SQL (0.1ms)  DELETE FROM "ninjas" WHERE "ninjas"."id" = ?  [["id", 8]]
+  SQL (0.1ms)  DELETE FROM "ninjas" WHERE "ninjas"."id" = ?  [["id", 9]]
+  SQL (0.9ms)  DELETE FROM "dojos" WHERE "dojos"."id" = ?  [["id", 5]]
+   (5.3ms)  commit transaction
++----+---------------------------+------------+-------+-------------------------+-------------------------+
+| id | name                      | city       | state | created_at              | updated_at              |
++----+---------------------------+------------+-------+-------------------------+-------------------------+
+| 5  | Coding Dojo Orange County | Costa Mesa | CA    | 2017-04-06 07:39:23 UTC | 2017-04-06 07:39:23 UTC |
++----+---------------------------+------------+-------+-------------------------+-------------------------+
+1 row in set
+2.3.1 :030 > Dojo.all
+  Dojo Load (2.6ms)  SELECT "dojos".* FROM "dojos"
++----+---------------------+---------+-------+-------------------------+-------------------------+
+| id | name                | city    | state | created_at              | updated_at              |
++----+---------------------+---------+-------+-------------------------+-------------------------+
+| 4  | Coding Dojo Burbank | Burbank | CA    | 2017-04-06 07:39:18 UTC | 2017-04-06 07:39:18 UTC |
+| 6  | Coding Dojo Chicago | Chicago | IL    | 2017-04-06 07:39:25 UTC | 2017-04-06 07:39:25 UTC |
+| 7  | Coding Dojo Austin  | Austin  | TX    | 2017-04-06 07:40:11 UTC | 2017-04-06 07:40:11 UTC |
++----+---------------------+---------+-------+-------------------------+-------------------------+
+3 rows in set
+2.3.1 :031 > Ninja.all
+  Ninja Load (3.7ms)  SELECT "ninjas".* FROM "ninjas"
++----+------------+-----------+---------+-------------------------+-------------------------+
+| id | first_name | last_name | dojo_id | created_at              | updated_at              |
++----+------------+-----------+---------+-------------------------+-------------------------+
+| 1  | Nick       | Smith     | 1       | 2017-04-06 06:29:45 UTC | 2017-04-06 06:29:45 UTC |
+| 2  | Eddie      | Ronaldo   | 1       | 2017-04-06 06:32:10 UTC | 2017-04-06 06:32:10 UTC |
+| 3  | Bruce      | Wayne     | 1       | 2017-04-06 06:32:43 UTC | 2017-04-06 06:32:43 UTC |
+| 10 | Robert     | Baggio    | 7       | 2017-04-06 07:58:03 UTC | 2017-04-06 07:58:03 UTC |
+| 11 | Toti       | Rome      | 7       | 2017-04-06 07:58:03 UTC | 2017-04-06 07:58:03 UTC |
+| 12 | Torres     | Fernandez | 7       | 2017-04-06 07:58:13 UTC | 2017-04-06 07:58:13 UTC |
++----+------------+-----------+---------+-------------------------+-------------------------+
+6 rows in set
